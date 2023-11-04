@@ -1,25 +1,29 @@
-(def element WorldTorpedoMarker (_entityId:number) layout=true
+(def element WorldTorpedoMarker (_markerEntity:gfx) layout=true
 	(scope
-		(var markerEntity:gfx = "$datahub.getEntity(_entityId)")
-
 		(event evMarkerShow)
 
 		(macro GET_MARKER_ENTITY_COMPONENT 'torpedo')
-		(macro GET_MARKER_ENTITY_COMPONENT 'distance')
+		(macro VAR_RELATION "_markerEntity")
 		#mod
 		(macro GET_MARKER_ENTITY_COMPONENT 'data')
 		#
-		(macro VAR_RELATION "markerEntity")
 
 		(var type:str = "torpedoComponent.type" (event "torpedoComponent.evTypeChanged"))
-		
+
 		#mod
-		#(var visibleAsNormal:bool = "isIn(type, SC.Battle.TORPEDO_MARKER_TYPE.GUIDED_TYPES)")
 		(var isHoming:bool = "dataComponent.data.isHoming" (event "dataComponent.evChanged"))
 		(var markerColorTransform:dict = "relation == RELATION_NAMES.OWN ? TWO_TEAMS_COLOR_TRANSFORMS['ally'] : TWO_TEAMS_COLOR_TRANSFORMS[relation]")
-		#
+		
+		#(var visibleAsNormal:bool = "isIn(type, SC.Battle.TORPEDO_MARKER_TYPE.GUIDED_TYPES)")
 
 		(var markerIcon:str = "'icon_torpedo_' + type + '_' + relation")
+		#
+
+		#fix for spotted indicator
+		(macro GET_MARKER_ENTITY_COMPONENT 'dataComponent')
+		(var isSpotted:bool = "dataComponentComponent ? dataComponentComponent.data.spotted > 0 : false" (event "dataComponentComponent.evDataChanged"))
+		(var isDWmarkerIcon:bool = "isIn(markerIcon, ['icon_torpedo_not_dangerous_ally', 'icon_torpedo_not_dangerous_enemy', 'icon_torpedo_not_dangerous_own'])")
+		#
 	)
 
 	(dispatch evMarkerShow args="{}" on='addedToStage')
@@ -30,13 +34,23 @@
 	)
 
 	(block
+		#Fix for spotted indicator
 		(block
-		#mod	
+			(bind visible "isSpotted")
+			(style
+				(position = "absolute")
+				(top = -6)
+				(bind left "isDWmarkerIcon ? 0 : 2.25")
+				(alpha = 0.7)
+				(bind backgroundImage "'url:../unbound2/!battleframe/tpd_detection_indicator/icon_torpedo_spotted.png'")
+				(backgroundSize = "autosize")
+			)
+		)
+		#
+		#mod
+		(block
 			(block
-				#(element SimpleMarkerTextItem "isHoming")
 				(style
-					#(bind backgroundImage "'url:../battle_hud/markers/scenario_tags/icon_scenario_tag_attack.png'")
-					#(bind backgroundImage "'url:../battle_hud/markers/priority/atba_priority_attack.png'")
 					(bind backgroundImage "'url:../../../PnFMods/AdvancedTorpedoMarkerPy/torpedo_homing.png'")
 					(width = 24)
 					(height = 24)
@@ -48,6 +62,7 @@
 				(bind colorTransform "markerColorTransform")
 			)
 			#
+
 			(block
 				(style
 					(bind backgroundImage "'url:../battle_hud/markers/torpedoes/' + markerIcon + '.png'")
