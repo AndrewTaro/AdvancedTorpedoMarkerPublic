@@ -81,3 +81,8 @@
 		)
 	)
 )
+
+#Fix for spotted indicator
+(def element BattleframeTpd() layout = true dispatch_size_change = true
+	(bindcall externalCall 'inputMapping.onAction' "['createParamsForAllShipsInBattle', {}]" on='addedToStage')
+)
