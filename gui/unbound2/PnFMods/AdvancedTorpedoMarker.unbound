@@ -11,7 +11,7 @@
 		(var type:str = "torpedoComponent.type" (event "torpedoComponent.evTypeChanged"))
 
 		#mod
-		(var isHoming:bool = "dataComponent.data.isHoming" (event "dataComponent.evChanged"))
+		(var isHoming:bool = "dataComponent ? dataComponent.data.isHoming : false" (event "dataComponent.evChanged"))
 		(var markerColorTransform:dict = "relation == RELATION_NAMES.OWN ? TWO_TEAMS_COLOR_TRANSFORMS['ally'] : TWO_TEAMS_COLOR_TRANSFORMS[relation]")
 		
 		#(var visibleAsNormal:bool = "isIn(type, SC.Battle.TORPEDO_MARKER_TYPE.GUIDED_TYPES)")
