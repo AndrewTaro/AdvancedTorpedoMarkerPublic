@@ -1,3 +1,5 @@
+(def constant TT_ADVANCEDTORPEDOMARKER_INSTALLED true)
+
 (def element WorldTorpedoMarker (_markerEntity:gfx) layout=true
 	(scope
 		(event evMarkerShow)
